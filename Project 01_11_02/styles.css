@@ -1,14 +1,14 @@
 /*  Project 01_11_02
 
     Filename: styles.css
-*/
+*/ 
 
 /* apply a natural box layout model to all elements */
 * {
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
    box-sizing: border-box;
-}
+} 
 
 /* reset rules */
 html, body, div, span, applet, object, iframe,

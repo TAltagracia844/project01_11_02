@@ -6,11 +6,11 @@
     Filename: script.js
 */
 
-"use strict";
+"use strict"; 
 
 // Global Variable 
 var httpRequest = false;
-var entry = "^IXIC";
+var entry = "MSFT";
 
 
 // Creates XHR object
@@ -22,13 +22,14 @@ function getRequestObject(){
 return false;
     }
     //test function
-    alert(httpRequest);
+    // alert(httpRequest);
     return httpRequest;
 }
 
 // Function stops any default submission from executing
 function stopSubmission(evt){
-    alert("stopSubmission()");
+     //Checks to see if function passes through
+    // alert("stopSubmission()");
     if(evt.preventDefault){
         evt.preventDefault();
     }
@@ -39,9 +40,13 @@ function stopSubmission(evt){
 
 // Request stock quote data form server
 function getQuote(){
-    alert("getQuote()");
+    //Checks to see if function passes through
+    // alert("getQuote()");
     if(document.getElementsByTagName("input")[0].value){
         entry = document.getElementsByTagName("input")[0].value;
+    }
+    else{
+        document.getElementsByTagName("input")[0].value = entry;
     }
     if(!httpRequest){
         httpRequest = getRequestObject();
@@ -51,13 +56,18 @@ function getQuote(){
     httpRequest.open("get", "StockCheck.php?t=" + entry, true);
     httpRequest.send(null);
     httpRequest.onreadystatechange = displayData;
+    var updateQuote = setTimeout('getQuote()',10000);
 }
+
+// Displays data if the ready stage is equal to 4 and has a status of 200
 function displayData(){
     if(httpRequest.readyState === 4 && httpRequest.status === 200){
         var stockResults = httpRequest.responseText;
-        console.log(stockResults);
+         //Checks to see if function passes through
+        // console.log(stockResults);
         var stockItems = stockResults.split(/,|\"/);
-        console.log(stockItems);
+         //Checks to see if function passes through
+        // console.log(stockItems);
         for (var i = stockItems.length - 1; i >= 0; i-- ){
             if(stockItems[i] === ""){
                 stockItems.splice(i,1);
@@ -85,10 +95,12 @@ function formatTable(){
 var form = document.getElementsByTagName("form")[0];
 if(form.addEventListener){
     form.addEventListener("submit", stopSubmission,false);
-    window.addEventListener("load",getRequestObject,false);
+    window.addEventListener("load",formatTable,false);
+    window.addEventListener("load",getQuote,false);
 
 }
 else if(form.attachEvent){
     form.attachEvent("onsubmit", stopSubmission);
-    window.attachEvent("onload", getRequestObject);
+    window.attachEvent("onload", formatTable);
+    window.attachEvent("onload",getQuote)
 }

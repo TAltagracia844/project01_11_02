@@ -55,6 +55,7 @@ function getQuote(){
     httpRequest.abort();
     httpRequest.open("get", "StockCheck.php?t=" + entry, true);
     httpRequest.send(null);
+    //
     httpRequest.onreadystatechange = displayData;
     var updateQuote = setTimeout('getQuote()',10000);
 }
@@ -65,33 +66,38 @@ function displayData(){
         var stockResults = httpRequest.responseText;
          //Checks to see if function passes through
         // console.log(stockResults);
-        var stockItems = stockResults.split(/,|\"/);
+        // var stockItems = stockResults.split(/,|\"/);
+        var stockItems = JSON.parse(stockResults);
          //Checks to see if function passes through
         // console.log(stockItems);
-        for (var i = stockItems.length - 1; i >= 0; i-- ){
-            if(stockItems[i] === ""){
-                stockItems.splice(i,1);
-            }
-        }
-        document.getElementById("ticker").innerHTML = stockItems[0];
-        document.getElementById("openingPrice").innerHTML = stockItems[6];
-        document.getElementById("lastTrade").innerHTML = stockItems[1];
-        document.getElementById("lastTradeDT").innerHTML = stockItems[2] + "," + stockItems[3];
-        document.getElementById("change").innerHTML = stockItems[4];
-        document.getElementById("range").innerHTML = (stockItems[8] * 1).toFixed(2) + "&ndash;" + (stockItems[7]*1).toFixed(2);
-        document.getElementById("volume").innerHTML = (stockItems[9] * 1).toLocaleString();
-        console.log(stockItems);
+        // Splits the string and turns the data into a array that are seperated by a comma
+        // for (var i = stockItems.length - 1; i >= 0; i-- ){
+        //     if(stockItems[i] === ""){
+        //         stockItems.splice(i,1);
+        //     }
+        // }
+console.log(stockItems);
+
+        document.getElementById("ticker").innerHTML = stockItems.symbol;
+        document.getElementById("openingPrice").innerHTML = stockItems.open;
+        document.getElementById("lastTrade").innerHTML = stockItems.latestPrice;
+        var date = new Date(stockItems.latestUpdate);
+        document.getElementById("lastTradeDT").innerHTML = date.toDateString() + "<br>" + date.toLocaleTimeString();
+        document.getElementById("change").innerHTML = (stockItems.latestPrice - stockItems.open).toFixed(2);
+        document.getElementById("range").innerHTML = "Low " + (stockItems.low * 1).toFixed(2)  + "<br>High " + (stockItems.high * 1).toFixed(2);
+       document.getElementById("volume").innerHTML = (stockItems.latestVolume * 1).toLocaleString();
+        // console.log(stockItems);
     }
 }
-
+// Gives the table a background color
 function formatTable(){
     var rows = document.getElementsByTagName("tr");
-    for( var i=0; i < rows.length; i ++){
+    for(var i=0; i < rows.length; i= i + 2){
         rows[i].style.background = "#9FE098";
     }
 }
 
-// Event Handler for the page on the submit event
+// Event Handler for the page on the submit/load event
 var form = document.getElementsByTagName("form")[0];
 if(form.addEventListener){
     form.addEventListener("submit", stopSubmission,false);
